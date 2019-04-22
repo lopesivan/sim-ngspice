@@ -1,0 +1,57 @@
+Exemplo testado em decorrência do vídeo https://www.youtube.com/watch?v=yMZQF11yZQ8
+
+* Como estou tendo dificuldades, vou simplificar e gostaria de suas
+* observaçoes.
+*
+* Para um circuito com uma fonte U=230V que opera a 50Hz  com uma
+* carga indutiva com R=23 Ohm e L=54.9 mH
+*
+*
+* V = <230, 0°>
+* Z = 23 + J17.25
+* I = V/Z = <230, 0°>/(23 + J17.25) = <8, -36.8°>
+
+.param f = 50
+
+V1 f1    GND   AC 230,0
+R1 f1    fout     23
+L1 fout  GND   54.9m
+
+****************************************************************
+* Parâmetros de simulação
+*
+* ac <dec|oct|lin> np f0 ff
+* np - Número de pontos
+* f0 - frequencia inicial
+* ff - frequancia final
+*
+.ac dec 1000 1 1k
+
+.control
+    run
+    echo "Corrente I:"
+    let tbl = mag(v1#branch)
+    meas ac magnitude FIND tbl AT=50
+    let tbl = ph(v1#branch)*180/pi-180
+    meas ac fase FIND tbl AT=50
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    echo
+    echo "V[R]:"
+    let tbl = mag(v(fout,f1))
+    meas ac magnitude FIND tbl AT=50
+    let tbl = ph(v(fout,f1))*180/pi-180
+    meas ac fase FIND tbl AT=50
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    echo
+    echo "V[L]:"
+    let tbl = mag(v(fout))
+    meas ac magnitude FIND tbl AT=50
+    let tbl = ph(v(fout))*180/pi
+    meas ac fase FIND tbl AT=50
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    quit
+.endc
+.end
