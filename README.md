@@ -22,6 +22,12 @@ eletônicos.
 
 ## Installation
 
+## Credits:
+
+Simulation based on *Bruno F Estevão* presentation.
+
+Credits:
+[Bruno F Estevão](https://www.youtube.com/watch?v=yMZQF11yZQ)
 
 ## License
 
