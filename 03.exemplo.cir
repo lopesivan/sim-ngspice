@@ -1,0 +1,66 @@
+Multiple-source AC network circuit
+
+****************************************************************
+* Descrição: One of the idiosyncrasies of SPICE is its inability to handle any
+* loop in a circuit exclusively composed of series voltage sources and
+* inductors. Therefore, the “loop” of V1-L1-L2-V2-V1 is unacceptable. To get
+* around this, I had to insert a low-resistance resistor somewhere in that
+* loop to break it up. Thus, we have Rbogus between 3 and 4 (with 1 pico-ohm
+* of resistance), and V2 between 4 and 0. The circuit above is the original
+* design, while the circuit below has Rbogus inserted to avoid the SPICE
+* error.
+*
+* Copyright © 2019 - Ivan Carlos S. Lopes
+* Distribuido sob a licença GNU GPL3
+*
+****************************************************************
+
+****************************************************************
+* Descrição do circuito
+*
+.param f = 30       $ frequencia de 30 Hz
+
+V1     1 0  AC 55,0
+V2     4 0  AC 43,25
+rbogus 3 4 1e-12
+
+L1   1 2  450m
+L2   2 3  150m
+C1   2 0  330u
+
+
+****************************************************************
+* Parâmetros de simulação
+*
+.ac dec 1000 1 1k
+*.ac lin 1 {f} {f}
+
+.control
+    run
+    echo "Corrente I:"
+    let tbl = mag(v1#branch)
+    meas ac magnitude FIND tbl AT=30
+    let tbl = ph(v1#branch)*180/pi-180
+    meas ac fase FIND tbl AT=30
+*    let fase = fase + 360
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    echo
+    echo "V[L1]:"
+    let tbl = mag(v(2,1))
+    meas ac magnitude FIND tbl AT={30}
+    let tbl = ph(v(2,1))*180/pi-180
+    meas ac fase FIND tbl AT={30}
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    echo
+    echo "V[L1]:"
+    let tbl = mag(v(2))
+    meas ac magnitude FIND tbl AT={30}
+    let tbl = ph(v(2))*180/pi-180
+    meas ac fase FIND tbl AT={30}
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    quit
+.endc
+.end
