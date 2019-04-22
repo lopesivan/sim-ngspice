@@ -1,0 +1,84 @@
+Example simple AC resistor-capacitor circuit
+
+****************************************************************
+* Descrição: Simulação do circuito ![circuito](01.exemplo.cir.png)
+* V1 = <12, 0°>    f = 60 Hz
+* R1 = 30          C = 100u
+*
+* w = 2*pi*f  ->  2*3.14*60 = 376.991
+* XC = (1/w*C) = (1/(376.991*100u)) = (1/(376.991*100*10^-6)) = 26.525
+* Z[C1] = J(-26.525)
+*
+* Zeq = R1 + JXC = 30 + J(-26.525)
+*                = <40.045, -41.48°>
+* I = V/Zeq = <12, 0°>/(30 -J26.525) = <.2996, 41.4829°>     [ A]
+*                                    = .22446 + J 0.19849    [ A]
+*                                    = <299.6, 41.4829°>     [mA]
+*                                    = 224.4463 + J 198.4539 [mA]
+*
+* V[R1] = R1*I = <30, 0> * <0.2996, 41.4829°>
+*       = <8.9898, 41.4829°>
+*       = 6.7347 + J 5.9548
+*
+* V[C1] = Z[C1]*I = <26.525, -90°> * <0.2996, 41.4829°>
+*       = <7.9485, -48.517°>
+*       = 5.2650 + J(-5.95465)
+*
+****************************************************************
+* Copyright © 2019 - Ivan Carlos S. Lopes
+* Distribuido sob a licença GNU GPL3
+*
+
+****************************************************************
+* simulation based on *Bruno F Estevão* presentation
+*
+* Credits:
+* [Bruno F Estevão](https://www.youtube.com/watch?v=yMZQF11yZQ)
+*
+****************************************************************
+
+****************************************************************
+* Descrição do circuito
+*
+
+.param f = 60       $ frequencia de 60 Hz
+.param T = {1/f}
+
+V1    1 0  AC 12,0
+R1    1 2  30
+C1    2 0  100u
+
+****************************************************************
+* Parâmetros de simulação
+*
+.ac dec 1000 1 1k
+
+.control
+    run
+    echo "Corrente I:"
+    let tbl = mag(v1#branch)
+    meas ac magnitude FIND tbl AT=60
+    let tbl = ph(v1#branch)*180/pi-180
+    meas ac fase FIND tbl AT=60
+    let fase = fase + 360
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    echo
+    echo "V[R]:"
+    let tbl = mag(v(2,1))
+    meas ac magnitude FIND tbl AT=60
+    let tbl = ph(v(2,1))*180/pi-180
+    meas ac fase FIND tbl AT=60
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    echo
+    echo "V[C]:"
+    let tbl = mag(v(2))
+    meas ac magnitude FIND tbl AT=60
+    let tbl = ph(v(2))*180/pi
+    meas ac fase FIND tbl AT=60
+    echo "<",$&magnitude,", ∠",$&fase,"° >"
+
+    quit
+.endc
+.end
