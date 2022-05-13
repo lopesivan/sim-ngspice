@@ -45,13 +45,25 @@ C  = 100*u;
 w = 2*pi*f;
 XC= 1/(w*C);
 
-Z = R1 + j*(-XC)
+ZC = to_rd(XC,-90);
+ZR = to_rd(R1,0);
+
+Z  = ZR + ZC
 %                = <40.045, -41.48°>
 to_pd(Z)
 
-%                                    = 224.4463 + J 198.4539 [mA]
-%                                    = <299.6, 41.4829°>     [mA]
 I = V/Z
-to_pd(I)
+%                                    = 224.4463 + J 198.4539 [mA]
+to_pd(I)  % polar display
+%                                    = <299.6, 41.4829°>     [mA]
 
-
+ZR = R1
+VR=ZR*I
+%                                    = 6.7347 + J 5.9548
+to_pd(VR)  % polar display
+%                                    = <8.9898, 41.4829°>
+%
+VC = ZC*I
+%                                    = 5.2650 + J(-5.95465)
+to_pd(VC)  % polar display
+%                                    = <7.9485, -48.517°>
